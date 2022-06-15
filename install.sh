@@ -22,6 +22,6 @@ printf "\tdone\n"
 
 printf "Clearing up..."
 
-rm -rf oxido_*
+rm -rf oxido*
 
 printf "\tdone\n"
