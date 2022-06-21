@@ -1,19 +1,45 @@
 # oxup
 
-Installer for the Oxido programming language
+Oxup is a tool for managing installations and packages of oxido.
 
 ## Installation
 
-You can use `curl` or `wget` to download the script and run it, you may have to manually remove the oxido binary if its in the working directory with `rm -rf oxido`.
+You can download oxup from the releases page for your operating system, unzip the download and add the binary to your path.
+
+### Windows
 
 ```bash
-curl https://raw.githubusercontent.com/megatank58/oxup/main/install.sh | sh
+setx PATH "C:\oxido;%PATH%" # path to binary
 ```
 
-## Uninstallation
-
-Oxido ships as a single binary, which is placed at `/usr/bin/oxido`, removing this will also remove the compiler.
+### Linux
 
 ```bash
-sudo rm -rf /usr/bin/oxido
+sudo install oxido /usr/local/bin
 ```
+
+### Macos
+
+```bash
+sudo install oxido /usr/local/bin
+```
+
+## Usage
+
+```bash
+oxup <command> [OPTIONS]
+```
+
+## Commands
+
+- `add` add packages to your project
+- `install` install oxido interpreter
+- `remove` remove packages from your project
+- `update` update the oxido interpreter to the latest version permitted by semver
+- `uninstall` uninstall oxido interpreter
+- `version` prints the version
+
+Options:
+- `-W` force run as windows
+- `-L` force run as linux
+- `-M` force run as macos
