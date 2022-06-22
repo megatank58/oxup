@@ -1,7 +1,7 @@
 mod installers;
 mod uninstallers;
 
-use uninstallers::{windows::uninstall_w, linux::uninstall_l, macos::uninstall_m};
+use uninstallers::{linux::uninstall_l, macos::uninstall_m, windows::uninstall_w};
 
 use crate::installers::{linux::install_l, macos::install_m, windows::install_w};
 use std::{
@@ -34,7 +34,6 @@ const VERSION: &str = "v1.0.0";
 fn main() {
     let args: Vec<String> = args().collect();
 
-
     if args.len() == 1 {
         println!("oxup: missing overand\n{}", HELP_MESSAGE);
         std::process::exit(1)
@@ -59,8 +58,7 @@ fn main() {
                 "macos" => install_m(),
                 _ => install_l(),
             }
-            println!("OK");
-        },
+        }
         "uninstall" => {
             let mut os = OS;
             if args.contains(&String::from("-L")) {
@@ -76,8 +74,7 @@ fn main() {
                 "macos" => uninstall_m(),
                 _ => uninstall_l(),
             }
-            println!("OK")
-        },
+        }
         "version" => println!("{}", VERSION),
         _ => {
             println!("oxup: missing overand\n{}", HELP_MESSAGE);
@@ -88,8 +85,4 @@ fn main() {
 
 fn shell_command(name: &str, args: Vec<&str>) -> String {
     String::from_utf8(Command::new(name).args(args).output().unwrap().stdout).unwrap()
-}
-
-fn current_shell() -> String {
-    shell_command("echo", vec!["$SHELL"]).split("/").last().unwrap().to_string()
 }

@@ -1,4 +1,4 @@
-use crate::{shell_command, current_shell};
+use crate::{shell_command};
 use regex::Regex;
 
 pub fn install_m() {
@@ -17,17 +17,18 @@ pub fn install_m() {
         .as_str()
         .to_string();
 
+    println!("Downloading release from {}...", &s);
+
     shell_command("wget", vec![&s]);
+
+    println!("Unpacking release...");
 
     shell_command("unzip", vec!["oxido*.darwin.zip"]);
 
+    println!("Moving to $HOME/.oxido...");
+
     shell_command("mkdir", vec!["$HOME/.oxido"]);
     shell_command("mv", vec!["oxido* $HOME/.oxido"]);
-    shell_command("export", vec!["PATH:$HOME/.oxido"]);
 
-    if current_shell() == "bash" {
-        shell_command("echo", vec!["\"export PATH:$HOME/.oxido\" >> $HOME/.bashrc"]);
-    } else if current_shell() == "zsh" {
-        shell_command("echo", vec!["\"export PATH:$HOME/.oxido\" >> $HOME/.zshrc"]);
-    } 
+    println!("Oxup installed successfully!\nRun echo \"export PATH=\"$HOME/.oxido:$PATH\"\" >> $HOME/.bashrc and restart your terminal to use it");
 }

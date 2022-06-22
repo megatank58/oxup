@@ -22,8 +22,8 @@ wget https://github.com/oxidite/oxup/releases/latest/download/oxup-linux.tar.gz
 tar -xf oxup-linux.tar.gz
 mkdir $HOME/.oxido
 mv oxup $HOME/.oxido
-export PATH=$PATH:$HOME/.oxido
-echo "export PATH=$PATH:$HOME/.oxido" >> $HOME/.bashrc
+export PATH="$HOME/.oxido:$PATH"
+echo "export PATH="$HOME/.oxido:$PATH"" >> $HOME/.bashrc
 ```
 
 ### Macos
@@ -33,8 +33,8 @@ wget https://github.com/oxidite/oxup/releases/latest/download/oxup-darwin.zip
 unzip oxup-darwin.zip
 mkdir $HOME/.oxido
 mv oxup $HOME/.oxido
-export PATH=$PATH:$HOME/.oxido
-echo "export PATH=$PATH:$HOME/.oxido" >> $HOME/.bashrc
+export PATH="$HOME/.oxido:$PATH"
+echo "export PATH="$HOME/.oxido:$PATH"" >> $HOME/.bashrc
 ```
 
 ## Usage
