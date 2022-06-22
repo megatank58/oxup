@@ -19,7 +19,7 @@ setx PATH "C:\oxido;%PATH%" # path to binary
 
 ```bash
 wget https://github.com/oxidite/oxup/releases/latest/download/oxup-linux.tar.gz
-tar -xf oxup_v1.0.0_x86_64-unknown-linux-musl.tar.gz
+tar -xf oxup-linux.tar.gz
 mkdir $HOME/.oxido
 mv oxup $HOME/.oxido
 export PATH=$PATH:$HOME/.oxido
