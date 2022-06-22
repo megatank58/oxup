@@ -1,5 +1,5 @@
 use regex::Regex;
-use crate::shell_command;
+use crate::{shell_command, current_shell};
 
 pub fn install_l() {
 
@@ -18,5 +18,14 @@ pub fn install_l() {
 
     shell_command("tar", vec!["-xf", "oxido*.tar.gz"]);
 
-    shell_command("sudo", vec!["install", "oxido /usr/local/bin/"]);
+    shell_command("mkdir", vec!["$HOME/.oxido"]);
+    shell_command("mv", vec!["oxido* $HOME/.oxido"]);
+    shell_command("export", vec!["PATH:$HOME/.oxido"]);
+
+    if current_shell() == "bash" {
+        shell_command("echo", vec!["\"export PATH:$HOME/.oxido\" >> $HOME/.bashrc"]);
+    } else if current_shell() == "zsh" {
+        shell_command("echo", vec!["\"export PATH:$HOME/.oxido\" >> $HOME/.zshrc"]);
+    } 
+    
 }

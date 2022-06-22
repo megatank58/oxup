@@ -89,3 +89,7 @@ fn main() {
 fn shell_command(name: &str, args: Vec<&str>) -> String {
     String::from_utf8(Command::new(name).args(args).output().unwrap().stdout).unwrap()
 }
+
+fn current_shell() -> String {
+    shell_command("echo", vec!["$SHELL"]).split("/").last().unwrap().to_string()
+}
