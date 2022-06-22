@@ -12,13 +12,13 @@ jobs:
         include:
           - target: x86_64-pc-windows-gnu
             archive: zip
-            name: windows
+            name: windows.zip
           - target: x86_64-unknown-linux-musl
             archive: tar.gz tar.xz
-            name: linux
+            name: linux.tar.gz
           - target: x86_64-apple-darwin
             archive: zip
-            name: darwin
+            name: darwin.zip
     steps:
       - uses: actions/checkout@master
       - name: Compile and release
@@ -28,3 +28,4 @@ jobs:
         with:
           RUSTTARGET: ${{ matrix.target }}
           ARCHIVE_TYPES: ${{ matrix.archive }}
+          ARCHIVE_NAME: ${{ matrix.name }}
