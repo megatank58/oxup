@@ -20,7 +20,7 @@ pub fn install_w() {
 
     shell_command("wget", vec![&s]);
 
-    shell_command("unzip", vec!["oxido*.gnu.zip"]);
+    shell_command("unzip", vec!["oxido-windows.gnu.zip"]);
 
     shell_command("mkdir", vec![r"C:\bin"]);
 

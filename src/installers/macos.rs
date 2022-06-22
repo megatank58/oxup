@@ -1,6 +1,6 @@
-use crate::{shell_command};
+use std::fs::{copy, metadata, remove_file, create_dir};
+use crate::shell_command;
 use regex::Regex;
-
 pub fn install_m() {
     let mut s = shell_command(
         "curl",
@@ -23,12 +23,20 @@ pub fn install_m() {
 
     println!("Unpacking release...");
 
-    shell_command("unzip", vec!["oxido*.darwin.zip"]);
+    shell_command("unzip", vec!["oxido-darwin.zip"]);
 
     println!("Moving to $HOME/.oxido...");
 
-    shell_command("mkdir", vec!["$HOME/.oxido"]);
-    shell_command("mv", vec!["oxido* $HOME/.oxido"]);
+    if !metadata(format!("{}/.oxido", std::env::var("HOME").unwrap())).is_ok() {
+        create_dir(format!("{}/.oxido", std::env::var("HOME").unwrap())).unwrap();
+    }
+    copy(
+        "oxido",
+        format!("{}/.oxido/oxido", std::env::var("HOME").unwrap()),
+    )
+    .unwrap();
+    remove_file("oxido").unwrap();
+    remove_file("oxido-darwin.zip").unwrap();
 
-    println!("Oxup installed successfully!\nRun echo \"export PATH=\"$HOME/.oxido:$PATH\"\" >> $HOME/.bashrc and restart your terminal to use it");
+    println!("Oxup installed successfully!\nRun 'echo \"export PATH=\"$HOME/.oxido:$PATH\"\" >> $HOME/.bashrc' and restart your terminal to use it");
 }

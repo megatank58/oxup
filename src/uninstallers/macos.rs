@@ -1,5 +1,3 @@
-use crate::shell_command;
-
 pub fn uninstall_m() {
-    shell_command("rm", vec!["-rf", "$HOME/.oxido/oxido"]);
+    std::fs::remove_file(format!("{}/.oxido/oxido", std::env::var("HOME").unwrap())).unwrap();
 }
