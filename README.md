@@ -4,7 +4,7 @@ Oxup is a tool for managing installations and packages of oxido.
 
 ## Installation
 
-You can download oxup from the [releases page](https://github.com/oxidite/oxup/releases) for your operating system, unzip the download and add the binary to your path.
+You can install oxup by running the commands below or from [github releases](https://github.com/oxidite/oxup/releases), unzip the download and add the binary to your path.
 
 ### Windows
 
@@ -23,6 +23,7 @@ tar -xf oxup_v1.0.0_x86_64-unknown-linux-musl.tar.gz
 mkdir $HOME/.oxido
 mv oxup $HOME/.oxido
 export PATH=$PATH:$HOME/.oxido
+echo "export PATH=$PATH:$HOME/.oxido" >> $HOME/.bashrc
 ```
 
 ### Macos
@@ -33,6 +34,7 @@ unzip oxup-darwin.zip
 mkdir $HOME/.oxido
 mv oxup $HOME/.oxido
 export PATH=$PATH:$HOME/.oxido
+echo "export PATH=$PATH:$HOME/.oxido" >> $HOME/.bashrc
 ```
 
 ## Usage
