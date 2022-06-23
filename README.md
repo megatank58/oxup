@@ -11,7 +11,7 @@ You can install oxup by running the commands below or from [github releases](htt
 ```sh
 wget https://github.com/oxidite/oxup/releases/latest/download/oxup-windows.zip
 unzip oxup-windows.zip
-oxup setup
+oxup.exe setup
 setx PATH "C:\oxido;%PATH%"
 ```
 
@@ -20,8 +20,8 @@ setx PATH "C:\oxido;%PATH%"
 ```bash
 wget https://github.com/oxidite/oxup/releases/latest/download/oxup-linux.tar.gz
 tar -xf oxup-linux.tar.gz
-oxup setup
-echo '. "$HOME/.oxido/env"' >> $HOME/.bashrc # .zshrc if you use zsh
+./oxup setup
+echo '. "$HOME/.oxido/env"' >> $HOME/.bashrc # echo '. "$HOME/.oxido/env"' >> $HOME/.bashrc # .zshrc if you use zsh c if you use zsh
 ```
 
 ### Macos
@@ -29,9 +29,11 @@ echo '. "$HOME/.oxido/env"' >> $HOME/.bashrc # .zshrc if you use zsh
 ```bash
 wget https://github.com/oxidite/oxup/releases/latest/download/oxup-darwin.zip
 unzip oxup-darwin.zip
-oxup setup
-echo '. "$HOME/.oxido/env"' >> $HOME/.bashrc # .zshrc if you use zsh
+./oxup setup
+echo '. "$HOME/.oxido/env"' >> $HOME/.bashrc # echo '. "$HOME/.oxido/env"' >> $HOME/.zshrc # .zshrc if you use zsh
 ```
+
+Then you can restart your shell and use oxido.
 
 ## Usage
 
