@@ -1,10 +1,8 @@
-# oxup
+# Oxup
 
 Oxup is a tool for managing installations and packages of oxido.
 
 ## Installation
-
-You can install oxup by running the commands below or from [github releases](https://github.com/oxidite/oxup/releases), unzip the download and add the binary to your path.
 
 ### Windows
 
