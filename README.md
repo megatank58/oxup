@@ -11,8 +11,8 @@ You can install oxup by running the commands below or from [github releases](htt
 ```sh
 wget https://github.com/oxidite/oxup/releases/latest/download/oxup-windows.zip
 unzip oxup-windows.zip
-mkdir C:\oxido
-setx PATH "C:\oxido;%PATH%" # path to binary
+oxup setup
+setx PATH "C:\oxido;%PATH%"
 ```
 
 ### Linux
@@ -20,10 +20,8 @@ setx PATH "C:\oxido;%PATH%" # path to binary
 ```bash
 wget https://github.com/oxidite/oxup/releases/latest/download/oxup-linux.tar.gz
 tar -xf oxup-linux.tar.gz
-mkdir $HOME/.oxido
-mv oxup $HOME/.oxido
-export PATH="$HOME/.oxido:$PATH"
-echo "export PATH="$HOME/.oxido:$PATH"" >> $HOME/.bashrc
+oxup setup
+echo '. "$HOME/.oxido/env"' >> $HOME/.bashrc # .zshrc if you use zsh
 ```
 
 ### Macos
@@ -31,10 +29,8 @@ echo "export PATH="$HOME/.oxido:$PATH"" >> $HOME/.bashrc
 ```bash
 wget https://github.com/oxidite/oxup/releases/latest/download/oxup-darwin.zip
 unzip oxup-darwin.zip
-mkdir $HOME/.oxido
-mv oxup $HOME/.oxido
-export PATH="$HOME/.oxido:$PATH"
-echo "export PATH="$HOME/.oxido:$PATH"" >> $HOME/.bashrc
+oxup setup
+echo '. "$HOME/.oxido/env"' >> $HOME/.bashrc # .zshrc if you use zsh
 ```
 
 ## Usage

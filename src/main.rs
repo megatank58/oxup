@@ -1,6 +1,8 @@
 mod installers;
+mod setup;
 mod uninstallers;
 
+use setup::{windows::setup_w, linux::setup_l, macos::setup_m};
 use uninstallers::{linux::uninstall_l, macos::uninstall_m, windows::uninstall_w};
 
 use crate::installers::{linux::install_l, macos::install_m, windows::install_w};
@@ -18,6 +20,7 @@ Usage:
 Commands:
 \tadd\t\tadd packages to your project
 \tinstall\t\tinstall oxido interpreter
+\tsetup\t\tsetup oxup directories
 \tremove\t\tremove packages from your project
 \tupdate\t\tupdate the oxido interpreter to the latest version permitted by semver
 \tuninstall\tuninstall oxido interpreter
@@ -73,6 +76,22 @@ fn main() {
                 "linux" => uninstall_l(),
                 "macos" => uninstall_m(),
                 _ => uninstall_l(),
+            }
+        }
+        "setup" => {
+            let mut os = OS;
+            if args.contains(&String::from("-L")) {
+                os = "linux";
+            } else if args.contains(&String::from("-M")) {
+                os = "macos";
+            } else if args.contains(&String::from("-W")) {
+                os = "windows";
+            }
+            match os {
+                "windows" => setup_w(),
+                "linux" => setup_l(),
+                "macos" => setup_m(),
+                _ => setup_l(),
             }
         }
         "version" => println!("{}", VERSION),
