@@ -21,7 +21,15 @@ setx PATH "C:\oxido;%PATH%"
 wget https://github.com/oxidite/oxup/releases/latest/download/oxup-linux.tar.gz
 tar -xf oxup-linux.tar.gz
 ./oxup setup
-echo '. "$HOME/.oxido/env"' >> $HOME/.bashrc # echo '. "$HOME/.oxido/env"' >> $HOME/.bashrc # .zshrc if you use zsh c if you use zsh
+```
+#### Bash
+```bash
+echo '. "$HOME/.oxido/env"' >> $HOME/.bashrc
+```
+
+#### Zsh
+```zsh
+echo '. "$HOME/.oxido/env"' >> $HOME/.zshrc
 ```
 
 ### Macos
@@ -30,7 +38,15 @@ echo '. "$HOME/.oxido/env"' >> $HOME/.bashrc # echo '. "$HOME/.oxido/env"' >> $H
 wget https://github.com/oxidite/oxup/releases/latest/download/oxup-darwin.zip
 unzip oxup-darwin.zip
 ./oxup setup
-echo '. "$HOME/.oxido/env"' >> $HOME/.bashrc # echo '. "$HOME/.oxido/env"' >> $HOME/.zshrc # .zshrc if you use zsh
+```
+#### Bash
+```bash
+echo '. "$HOME/.oxido/env"' >> $HOME/.bashrc
+```
+
+#### Zsh
+```zsh
+echo '. "$HOME/.oxido/env"' >> $HOME/.zshrc
 ```
 
 Then you can restart your shell and use oxido.
