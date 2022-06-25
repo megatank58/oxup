@@ -29,7 +29,7 @@ pub fn install_m() {
 
     copy(
         "oxido",
-        format!("{}/.oxido/oxido/bin", std::env::var("HOME").unwrap()),
+        format!("{}/.oxido/bin/oxido", std::env::var("HOME").unwrap()),
     )
     .unwrap();
     remove_file("oxido").unwrap();
