@@ -1,7 +1,10 @@
+use colored::Colorize;
 use std::fs::{copy, create_dir, metadata, remove_file, write};
 
+use crate::success;
+
 pub fn setup_l() {
-    if !metadata(format!("{}/.oxido", std::env::var("HOME").unwrap())).is_ok() {
+    if metadata(format!("{}/.oxido", std::env::var("HOME").unwrap())).is_err() {
         create_dir(format!("{}/.oxido", std::env::var("HOME").unwrap())).unwrap();
         create_dir(format!("{}/.oxido/bin", std::env::var("HOME").unwrap())).unwrap();
     }
@@ -36,8 +39,5 @@ esac
         remove_file("oxup-linux.tar.gz").unwrap();
     }
 
-    println!(
-        "created {}",
-        format!("{}/.oxido", std::env::var("HOME").unwrap())
-    )
+    success![format!("Created {}/.oxido", std::env::var("HOME").unwrap())]
 }

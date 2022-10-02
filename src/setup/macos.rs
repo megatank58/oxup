@@ -1,7 +1,9 @@
-use std::fs::{create_dir, metadata, write, remove_file, copy};
+use crate::success;
+use colored::Colorize;
+use std::fs::{copy, create_dir, metadata, remove_file, write};
 
 pub fn setup_m() {
-    if !metadata(format!("{}/.oxido", std::env::var("HOME").unwrap())).is_ok() {
+    if metadata(format!("{}/.oxido", std::env::var("HOME").unwrap())).is_err() {
         create_dir(format!("{}/.oxido", std::env::var("HOME").unwrap())).unwrap();
         create_dir(format!("{}/.oxido/bin", std::env::var("HOME").unwrap())).unwrap();
     }
@@ -36,8 +38,5 @@ esac
         remove_file("oxup-darwin.zip").unwrap();
     }
 
-    println!(
-        "created {}",
-        format!("{}/.oxido", std::env::var("HOME").unwrap())
-    )
+    success![format!("Created {}/.oxido", std::env::var("HOME").unwrap())]
 }

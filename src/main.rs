@@ -2,14 +2,13 @@ mod installers;
 mod setup;
 mod uninstallers;
 
-use setup::{windows::setup_w, linux::setup_l, macos::setup_m};
-use uninstallers::{linux::uninstall_l, macos::uninstall_m, windows::uninstall_w};
+use std::env::{args, consts::OS};
 
-use crate::installers::{linux::install_l, macos::install_m, windows::install_w};
-use std::{
-    env::{args, consts::OS},
-    process::Command,
-};
+use colored::Colorize;
+
+use installers::{linux::install_l, macos::install_m, windows::install_w};
+use setup::{linux::setup_l, macos::setup_m, windows::setup_w};
+use uninstallers::{linux::uninstall_l, macos::uninstall_m, windows::uninstall_w};
 
 const HELP_MESSAGE: &str = "
 Oxup is a tool for managing installations and packages of oxido.
@@ -38,14 +37,14 @@ fn main() {
     let args: Vec<String> = args().collect();
 
     if args.len() == 1 {
-        println!("oxup: missing overand\n{}", HELP_MESSAGE);
+        info!["{HELP_MESSAGE}"];
         std::process::exit(1)
     }
 
     let command = args[1].as_str();
 
     match command {
-        "help" => println!("{}", HELP_MESSAGE),
+        "help" => println!("{HELP_MESSAGE}"),
         "install" | "update" => {
             let mut os = OS;
             if args.contains(&String::from("-L")) {
@@ -94,14 +93,49 @@ fn main() {
                 _ => setup_l(),
             }
         }
-        "version" => println!("{}", VERSION),
+        "version" => println!("{VERSION}"),
         _ => {
-            println!("oxup: missing overand\n{}", HELP_MESSAGE);
+            println!("{HELP_MESSAGE}");
             std::process::exit(1)
         }
     }
 }
 
-fn shell_command(name: &str, args: Vec<&str>) -> String {
-    String::from_utf8(Command::new(name).args(args).output().unwrap().stdout).unwrap()
+#[macro_use]
+mod macros {
+
+    #[macro_export]
+    macro_rules! shell {
+        ($name:expr, $args:expr) => {
+            String::from_utf8(
+                std::process::Command::new($name)
+                    .args($args)
+                    .output()
+                    .unwrap()
+                    .stdout,
+            )
+            .unwrap()
+        };
+    }
+
+    #[macro_export]
+    macro_rules! info {
+        ($message:expr) => {
+            println!("{} {}", "=>".blue().bold(), $message);
+        };
+    }
+
+    #[macro_export]
+    macro_rules! error {
+        ($message:expr) => {
+            println!("{} {}", "=>".red().bold(), $message);
+        };
+    }
+
+    #[macro_export]
+    macro_rules! success {
+        ($message:expr) => {
+            println!("{} {}", "=>".green().bold(), $message)
+        };
+    }
 }
