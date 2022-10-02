@@ -22,7 +22,6 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - run: rustup toolchain install stable --profile minimal
-
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: ""
