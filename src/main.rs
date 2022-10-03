@@ -4,8 +4,6 @@ mod uninstallers;
 
 use std::env::{args, consts::OS};
 
-use colored::Colorize;
-
 use installers::{linux::install_l, macos::install_m, windows::install_w};
 use setup::{linux::setup_l, macos::setup_m, windows::setup_w};
 use uninstallers::{linux::uninstall_l, macos::uninstall_m, windows::uninstall_w};
@@ -37,7 +35,7 @@ fn main() {
     let args: Vec<String> = args().collect();
 
     if args.len() == 1 {
-        info!["{HELP_MESSAGE}"];
+        println!("{HELP_MESSAGE}");
         std::process::exit(1)
     }
 
