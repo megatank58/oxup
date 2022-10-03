@@ -55,16 +55,18 @@ Then you can restart your shell and use oxido.
 oxup <command> [OPTIONS]
 ```
 
-## Commands
+| Command     | Description                                                            |
+| ---         | ---                                                                    |
+| `add`       | add packages to your project                                           |
+| `install`   | install oxido interpreter                                              |
+| `setup`     | setup oxido directories                                                |
+| `remove`    | remove packages from your project                                      |
+| `update`    | update the oxido interpreter to the latest version permitted by semver |
+| `uninstall` | uninstall oxido interpreter                                            |
+| `version`   | prints the version                                                     |
 
-- `add` add packages to your project
-- `install` install oxido interpreter
-- `remove` remove packages from your project
-- `update` update the oxido interpreter to the latest version permitted by semver
-- `uninstall` uninstall oxido interpreter
-- `version` prints the version
-
-Options:
-- `-W` force run as windows
-- `-L` force run as linux
-- `-M` force run as macos
+| Option | Description          |
+| ---    | ---                  |
+| `-W`   | force run as windows |
+| `-L`   | force run as linux   |
+| `-M`   | force run as macos   |
