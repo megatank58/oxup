@@ -51,12 +51,15 @@ pub async fn install(os: OS) -> Result<(), Box<dyn std::error::Error>> {
 
     match os {
         OS::Linux => {
-            let tarfile = GzDecoder::new(reader);
-            let mut archive = tar::Archive::new(tarfile);
-            archive.unpack(format!(
-                "{}/.oxido/bin/oxido",
-                std::env::var("HOME").unwrap()
-            ))?;
+            #[cfg(target_os = "linux")]
+            {
+                let tarfile = GzDecoder::new(reader);
+                let mut archive = tar::Archive::new(tarfile);
+                archive.unpack(format!(
+                    "{}/.oxido/bin/oxido",
+                    std::env::var("HOME").unwrap()
+                ))?;
+            }
         }
         OS::Mac | OS::Windows => {
             #[cfg(target_os = "macos")]
