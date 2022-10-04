@@ -1,27 +1,27 @@
-mod installers;
+mod init;
+mod install;
+mod os;
 mod setup;
-mod uninstallers;
+mod uninstall;
 
-use std::env::{args, consts::OS};
+use crate::os::OS;
+use std::env::args;
 
-use installers::{linux::install_l, macos::install_m, windows::install_w};
-use setup::{linux::setup_l, macos::setup_m, windows::setup_w};
-use uninstallers::{linux::uninstall_l, macos::uninstall_m, windows::uninstall_w};
-
-const HELP_MESSAGE: &str = "
+const MESSAGE: &str = "
 Oxup is a tool for managing installations and packages of oxido.
 
 Usage:
 \toxup <command> [OPTIONS]
 
 Commands:
-\tadd\t\tadd packages to your project
-\tinstall\t\tinstall oxido interpreter
-\tsetup\t\tsetup oxup directories
-\tremove\t\tremove packages from your project
-\tupdate\t\tupdate the oxido interpreter to the latest version permitted by semver
-\tuninstall\tuninstall oxido interpreter
-\tversion\t\tprints the version
+\tadd\t\tAdd packages to your project
+\tinstall\t\tInstall oxido interpreter
+\tinit\t\tInitialize a new >
+\tsetup\t\tSetup oxup directories
+\tremove\t\tRemove packages from your project
+\tupdate\t\tUpdate the oxido interpreter to the latest version permitted by semver
+\tuninstall\tUninstall oxido interpreter
+\tversion\t\tPrints the version
 
 Options:
 \t-W\tforce run as windows 
@@ -31,109 +31,67 @@ Options:
 
 const VERSION: &str = "v1.0.0";
 
-fn main() {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = args().collect();
 
     if args.len() == 1 {
-        println!("{HELP_MESSAGE}");
+        println!("{MESSAGE}");
         std::process::exit(1)
     }
 
     let command = args[1].as_str();
+    let mut os = OS::from();
+    if args.contains(&String::from("-L")) {
+        os = OS::Linux;
+    } else if args.contains(&String::from("-M")) {
+        os = OS::Mac;
+    } else if args.contains(&String::from("-W")) {
+        os = OS::Windows;
+    }
 
     match command {
-        "help" => println!("{HELP_MESSAGE}"),
+        "help" => println!("{MESSAGE}"),
         "install" | "update" => {
-            let mut os = OS;
-            if args.contains(&String::from("-L")) {
-                os = "linux";
-            } else if args.contains(&String::from("-M")) {
-                os = "macos";
-            } else if args.contains(&String::from("-W")) {
-                os = "windows";
-            }
-            match os {
-                "windows" => install_w(),
-                "linux" => install_l(),
-                "macos" => install_m(),
-                _ => install_l(),
-            }
+            install::install(os).await?;
         }
+        "init" => init::init(),
         "uninstall" => {
-            let mut os = OS;
-            if args.contains(&String::from("-L")) {
-                os = "linux";
-            } else if args.contains(&String::from("-M")) {
-                os = "macos";
-            } else if args.contains(&String::from("-W")) {
-                os = "windows";
-            }
-            match os {
-                "windows" => uninstall_w(),
-                "linux" => uninstall_l(),
-                "macos" => uninstall_m(),
-                _ => uninstall_l(),
-            }
+            uninstall::uninstall(os);
         }
-        "setup" => {
-            let mut os = OS;
-            if args.contains(&String::from("-L")) {
-                os = "linux";
-            } else if args.contains(&String::from("-M")) {
-                os = "macos";
-            } else if args.contains(&String::from("-W")) {
-                os = "windows";
-            }
-            match os {
-                "windows" => setup_w(),
-                "linux" => setup_l(),
-                "macos" => setup_m(),
-                _ => setup_l(),
-            }
-        }
+        "setup" => setup::setup(os),
         "version" => println!("{VERSION}"),
         _ => {
-            println!("{HELP_MESSAGE}");
+            error![format!(
+                "command `{command}` not found!\nrun --help to view all commands"
+            )];
             std::process::exit(1)
         }
     }
+
+    Ok(())
 }
 
 #[macro_use]
 mod macros {
-
-    #[macro_export]
-    macro_rules! shell {
-        ($name:expr, $args:expr) => {
-            String::from_utf8(
-                std::process::Command::new($name)
-                    .args($args)
-                    .output()
-                    .unwrap()
-                    .stdout,
-            )
-            .unwrap()
-        };
-    }
-
     #[macro_export]
     macro_rules! info {
         ($message:expr) => {
-            println!("{} {}", "=>".blue().bold(), $message);
+            println!("{} {}", "\x1b[1minfo:\x1b[0m", $message);
         };
     }
 
     #[macro_export]
     macro_rules! error {
         ($message:expr) => {
-            println!("{} {}", "=>".red().bold(), $message);
+            println!("{} {}", "\x1b[1m\x1b[31merror:\x1b[0m", $message);
         };
     }
 
     #[macro_export]
     macro_rules! success {
         ($message:expr) => {
-            println!("{} {}", "=>".green().bold(), $message)
+            println!("{} {}", "\x1b[32m=>\x1b[0m", $message)
         };
     }
 }
