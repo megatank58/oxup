@@ -1,4 +1,4 @@
-use std::fs::{create_dir, write};
+use std::fs::{create_dir_all, write};
 
 use crate::success;
 
@@ -12,12 +12,11 @@ pub fn init(name: String) {
 "[package]
 name = {name}
 version = 0.1.0
-"
-    );
+");
 
-    create_dir("src").unwrap();
-    write("src/main.ox", default_function).unwrap();
-    write("Oxup.toml", metadata).unwrap();
+    create_dir_all(format!("{name}/src")).unwrap();
+    write(format!("{name}/src/main.ox"), default_function).unwrap();
+    write(format!("{name}/Oxup.toml"), metadata).unwrap();
 
     success![format!("Successfully initialised {name}!")]
 }
