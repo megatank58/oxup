@@ -1,4 +1,1 @@
-oxido*
-target
-Cargo.lock
-bin
+/target

@@ -11,10 +11,6 @@ use clap::{command, Parser, Subcommand};
 #[derive(Parser, Debug)]
 #[clap(author, version, about = "Oxup is a tool for managing installations and packages of oxido.", long_about = None)]
 struct Oxup {
-    /// Whether to output debug information
-    #[clap(short, long, value_parser)]
-    debug: bool,
-
     #[command(subcommand)]
     command: Commands,
 
