@@ -5,68 +5,77 @@ mod setup;
 mod uninstall;
 
 use crate::os::OS;
-use std::env::args;
+use clap::{command, Parser, Subcommand};
 
-const MESSAGE: &str = "
-Oxup is a tool for managing installations and packages of oxido.
+/// Oxup is a tool for managing installations and packages of oxido.
+#[derive(Parser, Debug)]
+#[clap(author, version, about = "Oxup is a tool for managing installations and packages of oxido.", long_about = None)]
+struct Oxup {
+    /// Whether to output debug information
+    #[clap(short, long, value_parser)]
+    debug: bool,
 
-Usage:
-\toxup <command> [OPTIONS]
+    #[command(subcommand)]
+    command: Commands,
 
-Commands:
-\tadd\t\tAdd packages to your project
-\tinstall\t\tInstall oxido interpreter
-\tinit\t\tInitialize a new >
-\tsetup\t\tSetup oxup directories
-\tremove\t\tRemove packages from your project
-\tupdate\t\tUpdate the oxido interpreter to the latest version permitted by semver
-\tuninstall\tUninstall oxido interpreter
-\tversion\t\tPrints the version
+    /// Force run as windows
+    #[clap(short, long, value_parser)]
+    windows: bool,
 
-Options:
-\t-W\tforce run as windows 
-\t-L\tforce run as linux 
-\t-M\tforce run as macos 
-";
+    /// Force run as Macos
+    #[clap(short, long, value_parser)]
+    macos: bool,
 
-const VERSION: &str = "v1.0.0";
+    /// Force run as Linux
+    #[clap(short, long, value_parser)]
+    linux: bool,
+}
+
+#[derive(Debug, Subcommand)]
+enum Commands {
+    /// Install latest version of oxido
+    #[command()]
+    Install,
+
+    /// Initialize a new project
+    #[command(arg_required_else_help = true)]
+    Init { file: String },
+
+    /// Setup oxup and its directories
+    #[command()]
+    Setup,
+
+    /// Uninstall oxido
+    #[command()]
+    Uninstall,
+
+    /// Update oxido to latest version avaliable
+    #[command()]
+    Update,
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args: Vec<String> = args().collect();
+    let args = Oxup::parse();
 
-    if args.len() == 1 {
-        println!("{MESSAGE}");
-        std::process::exit(1)
-    }
-
-    let command = args[1].as_str();
     let mut os = OS::from();
-    if args.contains(&String::from("-L")) {
+    if args.linux {
         os = OS::Linux;
-    } else if args.contains(&String::from("-M")) {
+    } else if args.macos {
         os = OS::Mac;
-    } else if args.contains(&String::from("-W")) {
+    } else if args.windows {
         os = OS::Windows;
     }
 
-    match command {
-        "help" => println!("{MESSAGE}"),
-        "install" | "update" => {
+    match args.command {
+        Commands::Install | Commands::Update => {
             install::install(os).await?;
         }
-        "init" => init::init(),
-        "uninstall" => {
+        Commands::Init { file } => init::init(file),
+        Commands::Uninstall => {
             uninstall::uninstall(os);
         }
-        "setup" => setup::setup(os),
-        "version" => println!("{VERSION}"),
-        _ => {
-            error![format!(
-                "command `{command}` not found!\nrun --help to view all commands"
-            )];
-            std::process::exit(1)
-        }
+        Commands::Setup => setup::setup(os),
     }
 
     Ok(())

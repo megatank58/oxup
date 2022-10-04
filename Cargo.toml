@@ -8,11 +8,19 @@ strip = true
 lto = true
 opt-level = "z"
 
+[target.'cfg(target_os = "macos")'.dependencies]
+zip = { version = "0.6.2", features = ["deflate"], default-features = false }
+
+[target.'cfg(windows)'.dependencies]
+zip = { version = "0.6.2", features = ["deflate"], default-features = false }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+tar = "0.4.38"
+
 [dependencies]
+clap = { version = "4.0.9", features = ["derive"] }
 flate2 = { version = "1.0.24", features = ["zlib-ng"], default-features = false }
 reqwest = { version = "0.10", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-tar = "0.4.38"
 tokio = { version = "0.2", features = ["macros"] }
-zip = { version = "0.6.2", features = ["deflate"], default-features = false }

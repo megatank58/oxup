@@ -6,7 +6,6 @@ use reqwest::{
     Client,
 };
 use serde::Deserialize;
-use std::{fs, io::Read, path};
 
 use crate::os::OS;
 
@@ -60,27 +59,31 @@ pub async fn install(os: OS) -> Result<(), Box<dyn std::error::Error>> {
             ))?;
         }
         OS::Mac | OS::Windows => {
-            let mut zip = zip::ZipArchive::new(reader).unwrap();
+            #[cfg(target_os = "macos")]
+            #[cfg(target_os = "windows")]
+            {
+                let mut zip = zip::ZipArchive::new(reader).unwrap();
 
-            let name = if os == OS::Windows {
-                String::from(r"oxido.exe")
-            } else {
-                String::from("oxido")
-            };
+                let name = if os == OS::Windows {
+                    String::from(r"oxido.exe")
+                } else {
+                    String::from("oxido")
+                };
 
-            let dir = if os == OS::Mac {
-                format!("{}/.oxido/bin/oxido", std::env::var("HOME").unwrap())
-            } else {
-                String::from(r"C:\bin")
-            };
+                let dir = if os == OS::Mac {
+                    format!("{}/.oxido/bin/oxido", std::env::var("HOME").unwrap())
+                } else {
+                    String::from(r"C:\bin")
+                };
 
-            let mut file_zip = zip.by_name(&name).unwrap();
-            let mut file_buf: Vec<u8> = Vec::new();
-            file_zip.read_to_end(&mut file_buf)?;
+                let mut file_zip = zip.by_name(&name).unwrap();
+                let mut file_buf: Vec<u8> = Vec::new();
+                file_zip.read_to_end(&mut file_buf)?;
 
-            fs::create_dir_all(&dir)?;
-            let path = path::Path::new(&dir).join(name);
-            fs::write(path, file_buf)?;
+                std::fs::create_dir_all(&dir)?;
+                let path = std::path::Path::new(&dir).join(name);
+                std::fs::write(path, file_buf)?;
+            }
         }
     }
 
