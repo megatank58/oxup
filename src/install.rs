@@ -56,7 +56,7 @@ pub async fn install(os: OS) -> Result<(), Box<dyn std::error::Error>> {
                 let tarfile = GzDecoder::new(reader);
                 let mut archive = tar::Archive::new(tarfile);
                 archive.unpack(format!(
-                    "{}/.oxido/bin/oxido",
+                    "{}/.oxido/bin",
                     std::env::var("HOME").unwrap()
                 ))?;
             }
@@ -74,7 +74,7 @@ pub async fn install(os: OS) -> Result<(), Box<dyn std::error::Error>> {
                 };
 
                 let dir = if os == OS::Mac {
-                    format!("{}/.oxido/bin/oxido", std::env::var("HOME").unwrap())
+                    format!("{}/.oxido/bin", std::env::var("HOME").unwrap())
                 } else {
                     String::from(r"C:\bin")
                 };

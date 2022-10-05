@@ -1,12 +1,12 @@
-use crate::{info, success, os::OS};
+use crate::{info, os::OS, success};
 
-use std::fs::{copy, create_dir, metadata, remove_file, write};
+use std::fs::{copy, create_dir_all, metadata, remove_file, write};
 
 pub fn setup(os: OS) {
     match os {
         OS::Windows => {
             if metadata("C:\\bin\\oxido").is_err() {
-                create_dir("C:\\bin\\oxido").unwrap();
+                create_dir_all("C:\\bin\\oxido").unwrap();
                 info!["Created directory C:\\bin\\oxido"];
             }
 
@@ -16,8 +16,7 @@ pub fn setup(os: OS) {
         }
         OS::Mac | OS::Linux => {
             if metadata(format!("{}/.oxido", std::env::var("HOME").unwrap())).is_err() {
-                create_dir(format!("{}/.oxido", std::env::var("HOME").unwrap())).unwrap();
-                create_dir(format!("{}/.oxido/bin", std::env::var("HOME").unwrap())).unwrap();
+                create_dir_all(format!("{}/.oxido/bin", std::env::var("HOME").unwrap())).unwrap();
             }
 
             write(
@@ -38,12 +37,12 @@ pub fn setup(os: OS) {
             )
             .unwrap();
 
-            copy(
-                "oxup",
-                format!("{}/.oxido/bin/oxup", std::env::var("HOME").unwrap()),
-            )
-            .unwrap();
             if metadata("./oxup").is_ok() {
+                copy(
+                    "oxup",
+                    format!("{}/.oxido/bin/oxup", std::env::var("HOME").unwrap()),
+                )
+                .unwrap();
                 remove_file("oxup").unwrap();
             }
             if metadata("./oxup-darwin.zip").is_ok() {
