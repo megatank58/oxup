@@ -11,25 +11,28 @@ jobs:
       matrix:
         include:
           - target: x86_64-pc-windows-gnu
-            archive: zip
-            name: oxup-windows
+            name: oxup.exe
           - target: x86_64-unknown-linux-musl
-            archive: tar.gz tar.xz
-            name: oxup-linux
+            name: oxup
           - target: x86_64-apple-darwin
-            archive: zip
             name: oxup-darwin
     steps:
       - uses: actions/checkout@master
-      - run: rustup toolchain install stable --profile minimal
-      - uses: Swatinem/rust-cache@v2
+      - uses: actions-rs/toolchain@v1
         with:
-          cache-on-failure: true
-      - name: Compile and release
-        uses: rust-build/rust-build.action@v1.3.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            toolchain: stable
+            default: true
+            override: true
+            components: rustfmt, clippy
+      - uses: actions-rs/cargo@v1
         with:
-          RUSTTARGET: ${{ matrix.target }}
-          ARCHIVE_TYPES: ${{ matrix.archive }}
-          ARCHIVE_NAME: ${{ matrix.name }}
+          command: build
+          args: --release
+      - run: cp target/release/$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[].targets[] | select( .kind | map(. == "bin") | any ) | .name') $(echo ${{ matrix.name }})
+      - uses: ncipollo/release-action@v1
+        with:
+          name: Release
+          tag: latest
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit: ${{ github.sha }}
+          artifacts: ${{ matrix.name }}
