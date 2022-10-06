@@ -12,7 +12,6 @@ pub fn setup(os: OS) {
 
             copy("oxup.exe", "C:\\bin\\oxido\\oxup.exe").unwrap();
             remove_file("oxup.exe").unwrap();
-            remove_file("oxup-windows.zip").unwrap();
         }
         OS::Mac | OS::Linux => {
             if metadata(format!("{}/.oxido", std::env::var("HOME").unwrap())).is_err() {
@@ -45,11 +44,8 @@ pub fn setup(os: OS) {
                 .unwrap();
                 remove_file("oxup").unwrap();
             }
-            if metadata("./oxup-darwin.zip").is_ok() {
-                remove_file("oxup-darwin.zip").unwrap();
-            }
 
-            success![format!("Created {}/.oxido", std::env::var("HOME").unwrap())]
+            success![format!("Created {}/.oxido", std::env::var("HOME").unwrap())];
         }
     }
 }

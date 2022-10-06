@@ -1,6 +1,4 @@
 use crate::{info, success};
-use flate2::bufread::GzDecoder;
-
 use reqwest::{
     header::{HeaderMap, USER_AGENT},
     Client,
@@ -29,9 +27,9 @@ pub async fn install(os: OS) -> Result<(), Box<dyn std::error::Error>> {
     let result: ReleaseData = response.json().await?;
 
     let filter = match os {
-        OS::Mac => "oxido-darwin.zip",
-        OS::Linux => "oxido-linux.tar.gz",
-        OS::Windows => "oxido-windows.zip",
+        OS::Mac => "oxido-darwin",
+        OS::Linux => "oxido",
+        OS::Windows => "oxido.exe",
     };
 
     let url: String = result
@@ -45,50 +43,18 @@ pub async fn install(os: OS) -> Result<(), Box<dyn std::error::Error>> {
 
     let response = client.get(&url).headers(headers.clone()).send().await?;
     let bytes = response.bytes().await?;
-    let reader = std::io::Cursor::new(bytes);
 
     info!["Moving package"];
 
-    match os {
-        OS::Linux => {
-            #[cfg(target_os = "linux")]
-            {
-                let tarfile = GzDecoder::new(reader);
-                let mut archive = tar::Archive::new(tarfile);
-                archive.unpack(format!(
-                    "{}/.oxido/bin",
-                    std::env::var("HOME").unwrap()
-                ))?;
+    std::fs::write(
+        match os {
+            OS::Windows => String::from(r"C:\bin"),
+            _ => {
+                format!("{}/.oxido/bin", std::env::var("HOME").unwrap())
             }
-        }
-        OS::Mac | OS::Windows => {
-            #[cfg(target_os = "macos")]
-            #[cfg(target_os = "windows")]
-            {
-                let mut zip = zip::ZipArchive::new(reader).unwrap();
-
-                let name = if os == OS::Windows {
-                    String::from(r"oxido.exe")
-                } else {
-                    String::from("oxido")
-                };
-
-                let dir = if os == OS::Mac {
-                    format!("{}/.oxido/bin", std::env::var("HOME").unwrap())
-                } else {
-                    String::from(r"C:\bin")
-                };
-
-                let mut file_zip = zip.by_name(&name).unwrap();
-                let mut file_buf: Vec<u8> = Vec::new();
-                file_zip.read_to_end(&mut file_buf)?;
-
-                std::fs::create_dir_all(&dir)?;
-                let path = std::path::Path::new(&dir).join(name);
-                std::fs::write(path, file_buf)?;
-            }
-        }
-    }
+        },
+        bytes,
+    )?;
 
     success!["Oxido has been installed!"];
 
