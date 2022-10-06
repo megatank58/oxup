@@ -32,8 +32,5 @@ jobs:
       - run: cp target/release/$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[].targets[] | select( .kind | map(. == "bin") | any ) | .name') $(echo ${{ matrix.name }})
       - uses: ncipollo/release-action@v1
         with:
-          name: Release
-          tag: latest
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit: ${{ github.sha }}
           artifacts: ${{ matrix.name }}
