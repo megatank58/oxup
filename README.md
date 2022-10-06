@@ -5,7 +5,7 @@ Oxup is a tool for managing installations and packages of oxido.
 ## Installation
 
 ```bash
-curl sh.megatank58.tech/oxup | sh
+curl lang.megatank58.tech/install | sh
 ```
 
 Then you can restart your shell and install oxido.
