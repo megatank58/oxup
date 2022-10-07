@@ -3,9 +3,10 @@ mod install;
 mod os;
 mod setup;
 mod uninstall;
+mod update;
 
 use crate::os::OS;
-use clap::{command, Parser, Subcommand};
+use clap::{command, Parser, Subcommand, ValueEnum};
 
 /// Oxup is a tool for managing installations and packages of oxido.
 #[derive(Parser, Debug)]
@@ -25,6 +26,10 @@ struct Oxup {
     /// Force run as Linux
     #[clap(short, long, value_parser)]
     linux: bool,
+
+    /// Do not check for updates
+    #[clap(short, long, value_parser)]
+    no_update: bool,
 }
 
 #[derive(Debug, Subcommand)]
@@ -46,8 +51,14 @@ enum Commands {
     Uninstall,
 
     /// Update oxido to latest version avaliable
-    #[command()]
-    Update,
+    #[command(arg_required_else_help = true)]
+    Update { update: Updateable },
+}
+
+#[derive(Debug, Clone, ValueEnum)]
+pub enum Updateable {
+    Oxido,
+    Oxup,
 }
 
 #[tokio::main]
@@ -64,14 +75,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     match args.command {
-        Commands::Install | Commands::Update => {
-            install::install(os).await?;
+        Commands::Install => {
+            install::install(os, false).await?;
         }
         Commands::Init { file } => init::init(file),
         Commands::Uninstall => {
             uninstall::uninstall(os);
         }
         Commands::Setup => setup::setup(os),
+        Commands::Update { update } => update::update(update, os).await?,
+    }
+
+    let current_version = env!("CARGO_PKG_VERSION");
+
+    let new_version = reqwest::get("https://raw.githubusercontent.com/oxidic/oxup/main/.version")
+        .await?
+        .text()
+        .await?;
+
+    if !args.no_update && current_version != new_version {
+        info![format!("Oxup v{new_version} is avaliable for download.")];
     }
 
     Ok(())
@@ -82,14 +105,14 @@ mod macros {
     #[macro_export]
     macro_rules! info {
         ($message:expr) => {
-            println!("{} {}", "\x1b[1minfo:\x1b[0m", $message);
+            println!("{} {}", "\x1b[1minfo:\x1b[0m", $message)
         };
     }
 
     #[macro_export]
     macro_rules! error {
         ($message:expr) => {
-            println!("{} {}", "\x1b[1m\x1b[31merror:\x1b[0m", $message);
+            println!("{} {}", "\x1b[1m\x1b[31merror:\x1b[0m", $message)
         };
     }
 

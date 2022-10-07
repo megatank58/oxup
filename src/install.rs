@@ -17,19 +17,29 @@ pub struct ReleaseData {
     assets: Vec<Release>,
 }
 
-pub async fn install(os: OS) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn install(os: OS, oxup: bool) -> Result<(), Box<dyn std::error::Error>> {
     let mut headers = HeaderMap::new();
     headers.insert(USER_AGENT, "megatank58".parse().unwrap());
 
-    let target = "https://api.github.com/repositories/500013933/releases/latest";
+    let target = if oxup {
+        "https://api.github.com/repos/oxidic/oxup/releases/latest"
+    } else {
+        "https://api.github.com/repositories/500013933/releases/latest"
+    };
     let client = Client::new();
     let response = client.get(target).headers(headers.clone()).send().await?;
     let result: ReleaseData = response.json().await?;
 
-    let filter = match os {
-        OS::Mac => "oxido-darwin",
-        OS::Linux => "oxido",
-        OS::Windows => "oxido.exe",
+    let bin = if oxup {
+        "oxup"
+    } else {
+        "oxido"
+    };
+
+    let filter = &match os {
+        OS::Mac => bin.to_owned() + "darwin",
+        OS::Linux => bin.to_owned(),
+        OS::Windows => bin.to_owned() + ".exe",
     };
 
     let url: String = result
@@ -39,7 +49,7 @@ pub async fn install(os: OS) -> Result<(), Box<dyn std::error::Error>> {
         .map(|f| f.browser_download_url.clone())
         .collect();
 
-    info!["Downloading oxido"];
+    info![format!("Downloading {bin}")];
 
     let response = client.get(&url).headers(headers.clone()).send().await?;
     let bytes = response.bytes().await?;
@@ -48,15 +58,15 @@ pub async fn install(os: OS) -> Result<(), Box<dyn std::error::Error>> {
 
     std::fs::write(
         match os {
-            OS::Windows => String::from(r"C:\bin"),
+            OS::Windows => format!(r"C:\bin\{bin}.exe"),
             _ => {
-                format!("{}/.oxido/bin", std::env::var("HOME").unwrap())
+                format!("{}/.oxido/bin/{bin}", std::env::var("HOME").unwrap())
             }
         },
         bytes,
     )?;
 
-    success!["Oxido has been installed!"];
+    success![format!("{bin} has been installed!")];
 
     Ok(())
 }
