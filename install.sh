@@ -4,15 +4,15 @@ PREFIX="${BLUE}=>${NONE} "
 echo -e "${PREFIX}Downloading oxup"
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    wget -q https://github.com/oxidic/oxup/releases/latest/download/oxup
+    curl -LO https://github.com/oxidic/oxup/releases/latest/download/oxup
     chmod +x oxup
     ./oxup setup
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-    wget -q https://github.com/oxidic/oxup/releases/latest/download/oxup-darwin
+    curl -LO https://github.com/oxidic/oxup/releases/latest/download/oxup-darwin
     chmod +x oxup-darwin
     ./oxup-darwin setup
 else
-    wget -q https://github.com/oxidic/oxup/releases/latest/download/oxup.exe
+    curl -LO https://github.com/oxidic/oxup/releases/latest/download/oxup.exe
     ./oxup.exe setup
 fi
 
