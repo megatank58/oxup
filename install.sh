@@ -8,7 +8,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     chmod +x oxup
     ./oxup setup
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-    wget -q https://github.com/oxidic/oxup/releases/latest/download/oxup-darwin
+    curl -LO https://github.com/oxidic/oxup/releases/latest/download/oxup-darwin
     chmod +x oxup-darwin
     ./oxup-darwin setup
 else
