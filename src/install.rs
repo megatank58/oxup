@@ -1,3 +1,5 @@
+use std::os::unix::prelude::OpenOptionsExt;
+
 use crate::{info, success};
 use reqwest::{
     header::{HeaderMap, USER_AGENT},
@@ -30,11 +32,7 @@ pub async fn install(os: OS, oxup: bool) -> Result<(), Box<dyn std::error::Error
     let response = client.get(target).headers(headers.clone()).send().await?;
     let result: ReleaseData = response.json().await?;
 
-    let bin = if oxup {
-        "oxup"
-    } else {
-        "oxido"
-    };
+    let bin = if oxup { "oxup" } else { "oxido" };
 
     let filter = &match os {
         OS::Mac => bin.to_owned() + "darwin",
@@ -56,15 +54,19 @@ pub async fn install(os: OS, oxup: bool) -> Result<(), Box<dyn std::error::Error
 
     info!["Moving package"];
 
-    std::fs::write(
-        match os {
-            OS::Windows => format!(r"C:\bin\{bin}.exe"),
-            _ => {
-                format!("{}/.oxido/bin/{bin}", std::env::var("HOME").unwrap())
-            }
-        },
-        bytes,
-    )?;
+    match os {
+        OS::Windows => std::fs::write(format!(r"C:\bin\{bin}.exe"), bytes)?,
+        _ => {
+            std::fs::OpenOptions::new()
+                .create(true)
+                .write(true)
+                .mode(0o770)
+                .open(format!(
+                    "{}/.oxido/bin/{bin}",
+                    std::env::var("HOME").unwrap()
+                ))?;
+        }
+    }
 
     success![format!("{bin} has been installed!")];
 
