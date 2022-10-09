@@ -1,3 +1,5 @@
+use std::os::unix::prelude::PermissionsExt;
+
 use crate::{info, success};
 use reqwest::{
     header::{HeaderMap, USER_AGENT},
@@ -31,6 +33,7 @@ pub async fn install(os: OS, oxup: bool) -> Result<(), Box<dyn std::error::Error
     let result: ReleaseData = response.json().await?;
 
     let bin = if oxup { "oxup" } else { "oxido" };
+    let home = std::env::var("HOME")?;
 
     let filter = &match os {
         OS::Mac => bin.to_owned() + "darwin",
@@ -56,17 +59,17 @@ pub async fn install(os: OS, oxup: bool) -> Result<(), Box<dyn std::error::Error
         match os {
             OS::Windows => format!(r"C:\bin\{bin}.exe"),
             _ => {
-                format!("{}/.oxido/bin/{bin}", std::env::var("HOME")?)
+                format!("{home}/.oxido/bin/{bin}")
             }
         },
         bytes,
     )?;
 
     if os == OS::Linux || os == OS::Mac {
-        std::process::Command::new("chmod").arg("-x").arg(format!(
-            "{}/.oxido/bin/{bin}",
-            std::env::var("HOME")?
-        ));
+        std::fs::set_permissions(
+            format!("{home}/.oxido/bin/{bin}"),
+            std::fs::Permissions::from_mode(0o770),
+        )?;
     }
 
     success![format!("{bin} has been installed!")];
