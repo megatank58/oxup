@@ -54,18 +54,25 @@ pub async fn install(os: OS, oxup: bool) -> Result<(), Box<dyn std::error::Error
 
     info!["Moving package"];
 
-    match os {
-        OS::Windows => std::fs::write(format!(r"C:\bin\{bin}.exe"), bytes)?,
-        _ => {
-            std::fs::OpenOptions::new()
-                .create(true)
-                .write(true)
-                .mode(0o770)
-                .open(format!(
-                    "{}/.oxido/bin/{bin}",
-                    std::env::var("HOME").unwrap()
-                ))?;
-        }
+    std::fs::write(
+        match os {
+            OS::Windows => format!(r"C:\bin\{bin}.exe"),
+            _ => {
+                format!("{}/.oxido/bin/{bin}", std::env::var("HOME").unwrap())
+            }
+        },
+        bytes,
+    )?;
+
+    if os == OS::Linux || os == OS::Mac {
+        std::fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .mode(0o770)
+            .open(format!(
+                "{}/.oxido/bin/{bin}",
+                std::env::var("HOME").unwrap()
+            ))?;
     }
 
     success![format!("{bin} has been installed!")];
