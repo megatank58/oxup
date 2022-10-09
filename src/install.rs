@@ -1,5 +1,3 @@
-use std::os::unix::prelude::OpenOptionsExt;
-
 use crate::{info, success};
 use reqwest::{
     header::{HeaderMap, USER_AGENT},
@@ -58,21 +56,17 @@ pub async fn install(os: OS, oxup: bool) -> Result<(), Box<dyn std::error::Error
         match os {
             OS::Windows => format!(r"C:\bin\{bin}.exe"),
             _ => {
-                format!("{}/.oxido/bin/{bin}", std::env::var("HOME").unwrap())
+                format!("{}/.oxido/bin/{bin}", std::env::var("HOME")?)
             }
         },
         bytes,
     )?;
 
     if os == OS::Linux || os == OS::Mac {
-        std::fs::OpenOptions::new()
-            .create(true)
-            .write(true)
-            .mode(0o770)
-            .open(format!(
-                "{}/.oxido/bin/{bin}",
-                std::env::var("HOME").unwrap()
-            ))?;
+        std::process::Command::new("chmod").arg("-x").arg(format!(
+            "{}/.oxido/bin/{bin}",
+            std::env::var("HOME")?
+        ));
     }
 
     success![format!("{bin} has been installed!")];
