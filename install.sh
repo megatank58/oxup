@@ -6,14 +6,14 @@ echo -e "${PREFIX}Downloading oxup"
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     curl -LO https://github.com/oxidic/oxup/releases/latest/download/oxup
     chmod +x oxup
-    ./oxup setup
+    ./oxup setup -n
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     curl -LO https://github.com/oxidic/oxup/releases/latest/download/oxup-darwin
     chmod +x oxup-darwin
-    ./oxup-darwin setup
+    ./oxup-darwin setup -n
 else
     curl -LO https://github.com/oxidic/oxup/releases/latest/download/oxup.exe
-    ./oxup.exe setup
+    ./oxup.exe setup -n
 fi
 
 if [[ $SHELL == *bash ]]; then
