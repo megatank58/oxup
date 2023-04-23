@@ -1,6 +1,6 @@
-# Oxup
+# Oxate
 
-Oxup is a tool for managing installations and packages of oxido.
+Oxate is a tool for managing installations and packages of oxido.
 
 ## Installation
 
@@ -13,7 +13,7 @@ Then you can restart your shell and install oxido.
 ## Usage
 
 ```bash
-oxup <command> [OPTIONS]
+oxate <command> [OPTIONS]
 ```
 
 | Command     | Description                                                            |

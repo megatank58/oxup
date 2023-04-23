@@ -1,6 +1,10 @@
 use crate::{info, os::OS, success};
 
-use std::fs::{copy, create_dir_all, metadata, remove_file, write};
+use std::{
+    env::var,
+    fs::{copy, create_dir_all, metadata, remove_file, set_permissions, write, Permissions},
+    os::unix::prelude::PermissionsExt,
+};
 
 pub fn setup(os: OS) {
     match os {
@@ -10,19 +14,20 @@ pub fn setup(os: OS) {
                 info!["Created directory C:\\bin\\oxido"];
             }
 
-            copy("oxup.exe", "C:\\bin\\oxido\\oxup.exe").unwrap();
-            remove_file("oxup.exe").unwrap();
+            copy("oxate.exe", "C:\\bin\\oxido\\oxate.exe").unwrap();
+            remove_file("oxate.exe").unwrap();
         }
         OS::Mac | OS::Linux => {
-            if metadata(format!("{}/.oxido", std::env::var("HOME").unwrap())).is_err() {
-                create_dir_all(format!("{}/.oxido/bin", std::env::var("HOME").unwrap())).unwrap();
+            let home = var("HOME").unwrap();
+            if metadata(format!("{home}/.oxido")).is_err() {
+                create_dir_all(format!("{home}/.oxido/bin")).unwrap();
             }
 
             write(
-                format!("{}/.oxido/env", std::env::var("HOME").unwrap()),
+                format!("{home}/.oxido/env"),
                 "
         #!/bin/sh
-        # oxup shell setup
+        # oxate shell setup
         # affix colons on either side of $PATH to simplify matching
         case \":${PATH}:\" in
             *:\"$HOME/.oxido/bin\":*)
@@ -36,16 +41,13 @@ pub fn setup(os: OS) {
             )
             .unwrap();
 
-            if metadata("./oxup").is_ok() {
-                copy(
-                    "oxup",
-                    format!("{}/.oxido/bin/oxup", std::env::var("HOME").unwrap()),
-                )
-                .unwrap();
-                remove_file("oxup").unwrap();
+            if metadata("./oxate").is_ok() {
+                set_permissions("./oxate", Permissions::from_mode(0o770)).unwrap();
+                copy("oxate", format!("{home}/.oxido/bin/oxate")).unwrap();
+                remove_file("oxate").unwrap();
             }
 
-            success![format!("Created {}/.oxido", std::env::var("HOME").unwrap())];
+            success![format!("Created {home}/.oxido")];
         }
     }
 }

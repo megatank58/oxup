@@ -1,19 +1,20 @@
 use crate::{install::install, Updateable, OS};
+use std::{env::var, error::Error, fs::remove_file};
 
-pub async fn update(update: Updateable, os: OS) -> Result<(), Box<dyn std::error::Error>> {
-    let (bin, oxup) = match update {
+pub async fn update(update: Updateable, os: OS) -> Result<(), Box<dyn Error>> {
+    let (bin, oxate) = match update {
         Updateable::Oxido => ("oxido", false),
-        Updateable::Oxup => ("oxup", true),
+        Updateable::Oxate => ("oxate", true),
     };
 
-    std::fs::remove_file(match os {
+    remove_file(match os {
         OS::Windows => format!(r"C:\bin\{bin}.exe"),
         _ => {
-            format!("{}/.oxido/bin/{bin}", std::env::var("HOME").unwrap())
+            format!("{}/.oxido/bin/{bin}", var("HOME").unwrap())
         }
     })?;
 
-    install(os, oxup).await?;
+    install(os, oxate).await?;
 
     Ok(())
 }

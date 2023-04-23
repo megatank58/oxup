@@ -1,5 +1,4 @@
-use std::os::unix::prelude::PermissionsExt;
-
+use std::{os::unix::prelude::PermissionsExt, env::var, fs::{write, set_permissions, Permissions}};
 use crate::{info, success};
 use reqwest::{
     header::{HeaderMap, USER_AGENT},
@@ -19,12 +18,12 @@ pub struct ReleaseData {
     assets: Vec<Release>,
 }
 
-pub async fn install(os: OS, oxup: bool) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn install(os: OS, oxate: bool) -> Result<(), Box<dyn std::error::Error>> {
     let mut headers = HeaderMap::new();
     headers.insert(USER_AGENT, "megatank58".parse().unwrap());
 
-    let target = if oxup {
-        "https://api.github.com/repos/oxidic/oxup/releases/latest"
+    let target = if oxate {
+        "https://api.github.com/repos/oxidic/oxate/releases/latest"
     } else {
         "https://api.github.com/repositories/500013933/releases/latest"
     };
@@ -32,8 +31,8 @@ pub async fn install(os: OS, oxup: bool) -> Result<(), Box<dyn std::error::Error
     let response = client.get(target).headers(headers.clone()).send().await?;
     let result: ReleaseData = response.json().await?;
 
-    let bin = if oxup { "oxup" } else { "oxido" };
-    let home = std::env::var("HOME")?;
+    let bin = if oxate { "oxate" } else { "oxido" };
+    let home = var("HOME")?;
 
     let filter = &match os {
         OS::Mac => bin.to_owned() + "darwin",
@@ -55,7 +54,7 @@ pub async fn install(os: OS, oxup: bool) -> Result<(), Box<dyn std::error::Error
 
     info!["Moving package"];
 
-    std::fs::write(
+    write(
         match os {
             OS::Windows => format!(r"C:\bin\{bin}.exe"),
             _ => {
@@ -66,9 +65,9 @@ pub async fn install(os: OS, oxup: bool) -> Result<(), Box<dyn std::error::Error
     )?;
 
     if os == OS::Linux || os == OS::Mac {
-        std::fs::set_permissions(
+        set_permissions(
             format!("{home}/.oxido/bin/{bin}"),
-            std::fs::Permissions::from_mode(0o770),
+            Permissions::from_mode(0o770),
         )?;
     }
 

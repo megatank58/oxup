@@ -1,16 +1,16 @@
 use crate::{os::OS, success};
+use std::{
+    env::var,
+    fs::{remove_dir_all, remove_file},
+};
 
 pub fn uninstall(os: OS) {
     match os {
         OS::Linux | OS::Mac => {
-            std::fs::remove_dir_all(format!(
-                "{}/.oxido/bin/oxido",
-                std::env::var("HOME").unwrap()
-            ))
-            .unwrap();
+            remove_dir_all(format!("{}/.oxido/bin/oxido", var("HOME").unwrap())).unwrap();
         }
         OS::Windows => {
-            std::fs::remove_file(r"C:\bin\oxido").unwrap();
+            remove_file(r"C:\bin\oxido").unwrap();
         }
     }
 

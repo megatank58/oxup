@@ -1,6 +1,6 @@
 [package]
-name = "oxup"
-version = "2.6.3"
+name = "oxate"
+version = "2.7.0"
 edition = "2021"
 
 [profile.release]
@@ -13,4 +13,4 @@ clap = { version = "4.0.9", features = ["derive"] }
 reqwest = { version = "0.10", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-tokio = { version = "1.18", features = ["macros"] }
+tokio = { version = "0.2.25", features = ["macros"] }
