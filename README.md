@@ -5,7 +5,7 @@ Oxate is a tool for managing installations and packages of oxido.
 ## Installation
 
 ```bash
-curl --proto '=https' --tlsv1.2 -sSf https://lang.megatank58.tech/install.sh | sh
+curl --proto '=https' --tlsv1.2 -sSf https://megatank58.tech/oxate_install.sh | sh
 ```
 
 Then you can restart your shell and install oxido.
