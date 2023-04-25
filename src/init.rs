@@ -15,5 +15,5 @@ version = \"0.1.0\"
     write(format!("{name}/src/main.oxi"), default_function).unwrap();
     write(format!("{name}/Oxate.toml"), metadata).unwrap();
 
-    success![format!("Successfully initialised {name}!")]
+    success!(format!("Successfully initialised {name}!"))
 }

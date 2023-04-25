@@ -1,4 +1,4 @@
-use std::env::consts;
+use std::env::{consts, var};
 
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 pub enum OS {
@@ -13,6 +13,13 @@ impl OS {
             "linux" => OS::Linux,
             "mac" => OS::Mac,
             _ => OS::Windows,
+        }
+    }
+
+    pub fn path(&self) -> String {
+        match self {
+            OS::Windows => String::from(r"C:\bin\"),
+            _ => var("HOME").unwrap() + "/.oxido/bin/",
         }
     }
 }

@@ -11,7 +11,7 @@ pub fn setup(os: OS) {
         OS::Windows => {
             if metadata("C:\\bin\\oxido").is_err() {
                 create_dir_all("C:\\bin\\oxido").unwrap();
-                info!["Created directory C:\\bin\\oxido"];
+                info!("Created directory C:\\bin\\oxido");
             }
 
             copy("oxate.exe", "C:\\bin\\oxido\\oxate.exe").unwrap();
@@ -47,7 +47,7 @@ pub fn setup(os: OS) {
                 remove_file("oxate").unwrap();
             }
 
-            success![format!("Created {home}/.oxido")];
+            success!(format!("Created {home}/.oxido"));
         }
     }
 }

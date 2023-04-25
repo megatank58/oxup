@@ -3,6 +3,7 @@ use clap::{command, Parser, Subcommand, ValueEnum};
 
 mod init;
 mod install;
+mod list;
 mod os;
 mod setup;
 mod uninstall;
@@ -26,9 +27,14 @@ enum Commands {
     #[command(arg_required_else_help = true)]
     Init { name: String },
 
+    /// List the avaliable oxido versions
+    #[command()]
+    List,
+
     /// Setup oxate and its directories
     #[command()]
     Setup,
+
     /// Uninstall oxido
     #[command()]
     Uninstall,
@@ -55,6 +61,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             install::install(os, false).await?;
         }
         Commands::Init { name } => init::init(name),
+        Commands::List => list::list(os).await,
         Commands::Uninstall => {
             uninstall::uninstall(os);
         }
@@ -70,14 +77,14 @@ mod macros {
     #[macro_export]
     macro_rules! info {
         ($message:expr) => {
-            println!("{} {}", "\x1b[1minfo:\x1b[0m", $message)
+            println!("{} {}", "\x1b[1m\x1b[1m=|\x1b[0m\x1b[1m", $message)
         };
     }
 
     #[macro_export]
     macro_rules! error {
         ($message:expr) => {
-            println!("{} {}", "\x1b[1m\x1b[31merror:\x1b[0m", $message)
+            println!("{} {}", "\x1b[1m\x1b[31m=|\x1b[0m", $message)
             std::process::exit(1);
         };
     }
@@ -85,7 +92,7 @@ mod macros {
     #[macro_export]
     macro_rules! success {
         ($message:expr) => {
-            println!("{} {}", "\x1b[32m=>\x1b[0m", $message)
+            println!("{} {}", "\x1b[1m\x1b[32m=|\x1b[0m", $message)
         };
     }
 }

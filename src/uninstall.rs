@@ -14,5 +14,5 @@ pub fn uninstall(os: OS) {
         }
     }
 
-    success!["Oxido has been uninstalled"];
+    success!("Oxido has been uninstalled");
 }
