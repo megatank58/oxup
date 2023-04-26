@@ -5,8 +5,10 @@ mod init;
 mod install;
 mod list;
 mod os;
+mod set;
 mod setup;
 mod uninstall;
+mod unset;
 mod update;
 
 /// Oxate is a tool for managing installations and packages of oxido.
@@ -21,7 +23,7 @@ struct Oxate {
 enum Commands {
     /// Install latest version of oxido
     #[command()]
-    Install,
+    Install { version: Option<String> },
 
     /// Create a new oxate project
     #[command(arg_required_else_help = true)]
@@ -31,9 +33,17 @@ enum Commands {
     #[command()]
     List,
 
+    /// Set a version of oxido as default
+    #[command()]
+    Set { version: String },
+
     /// Setup oxate and its directories
     #[command()]
     Setup,
+
+    /// Unset a version of oxido from default
+    #[command()]
+    Unset,
 
     /// Uninstall oxido
     #[command()]
@@ -57,15 +67,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let os = OS::from();
 
     match args.command {
-        Commands::Install => {
-            install::install(os, false).await?;
-        }
-        Commands::Init { name } => init::init(name),
-        Commands::List => list::list(os).await,
-        Commands::Uninstall => {
-            uninstall::uninstall(os);
-        }
-        Commands::Setup => setup::setup(os),
+        Commands::Install { version } => install::install(os, false, version).await?,
+        Commands::Init { name } => init::init(name)?,
+        Commands::List => list::list(os).await?,
+        Commands::Uninstall => uninstall::uninstall(os)?,
+        Commands::Set { version } => set::set(os, version).await?,
+        Commands::Unset => unset::unset(os)?,
+        Commands::Setup => setup::setup(os)?,
         Commands::Update { update } => update::update(update, os).await?,
     }
 
@@ -77,14 +85,14 @@ mod macros {
     #[macro_export]
     macro_rules! info {
         ($message:expr) => {
-            println!("{} {}", "\x1b[1m\x1b[1m=|\x1b[0m\x1b[1m", $message)
+            println!("{} {}", "\x1b[1m\x1b[1m-\x1b[0m\x1b[1m", $message)
         };
     }
 
     #[macro_export]
     macro_rules! error {
         ($message:expr) => {
-            println!("{} {}", "\x1b[1m\x1b[31m=|\x1b[0m", $message)
+            println!("{} {}", "\x1b[1m\x1b[31m-\x1b[0m", $message);
             std::process::exit(1);
         };
     }
@@ -92,7 +100,7 @@ mod macros {
     #[macro_export]
     macro_rules! success {
         ($message:expr) => {
-            println!("{} {}", "\x1b[1m\x1b[32m=|\x1b[0m", $message)
+            println!("{} {}", "\x1b[1m\x1b[32m-\x1b[0m", $message)
         };
     }
 }

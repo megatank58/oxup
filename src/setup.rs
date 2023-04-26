@@ -6,21 +6,21 @@ use std::{
     os::unix::prelude::PermissionsExt,
 };
 
-pub fn setup(os: OS) {
+pub fn setup(os: OS) -> Result<(), Box<dyn std::error::Error>> {
     match os {
         OS::Windows => {
             if metadata("C:\\bin\\oxido").is_err() {
-                create_dir_all("C:\\bin\\oxido").unwrap();
+                create_dir_all("C:\\bin\\oxido")?;
                 info!("Created directory C:\\bin\\oxido");
             }
 
-            copy("oxate.exe", "C:\\bin\\oxido\\oxate.exe").unwrap();
-            remove_file("oxate.exe").unwrap();
+            copy("oxate.exe", "C:\\bin\\oxido\\oxate.exe")?;
+            remove_file("oxate.exe")?;
         }
         OS::Mac | OS::Linux => {
-            let home = var("HOME").unwrap();
+            let home = var("HOME")?;
             if metadata(format!("{home}/.oxido")).is_err() {
-                create_dir_all(format!("{home}/.oxido/bin")).unwrap();
+                create_dir_all(format!("{home}/.oxido/bin"))?;
             }
 
             write(
@@ -39,15 +39,17 @@ pub fn setup(os: OS) {
         esac
         ",
             )
-            .unwrap();
+            ?;
 
             if metadata("./oxate").is_ok() {
-                set_permissions("./oxate", Permissions::from_mode(0o770)).unwrap();
-                copy("oxate", format!("{home}/.oxido/bin/oxate")).unwrap();
-                remove_file("oxate").unwrap();
+                set_permissions("./oxate", Permissions::from_mode(0o770))?;
+                copy("oxate", format!("{home}/.oxido/bin/oxate"))?;
+                remove_file("oxate")?;
             }
 
             success!(format!("Created {home}/.oxido"));
         }
-    }
+    };
+
+    Ok(())
 }

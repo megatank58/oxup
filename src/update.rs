@@ -14,7 +14,7 @@ pub async fn update(update: Updateable, os: OS) -> Result<(), Box<dyn Error>> {
         }
     })?;
 
-    install(os, oxate).await?;
+    install(os, oxate, None).await?;
 
     Ok(())
 }

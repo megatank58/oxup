@@ -1,6 +1,6 @@
 use std::env::{consts, var};
 
-#[derive(PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum OS {
     Mac,
     Linux,
